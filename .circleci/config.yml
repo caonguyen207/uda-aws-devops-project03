@@ -1,13 +1,6 @@
 version: 2.1
-orbs:
-  node: circleci/node:13.8.0
 
 commands:
-  defaults: &defaults
-    docker:
-      - image: circleci/node:13.8.0
-    working_directory: .
-
   print_pipeline_id:
     steps:
       - run:
@@ -18,8 +11,6 @@ commands:
 
   destroy_environment:
     description: Destroy back-end and front-end cloudformation stacks given a workflow ID.
-    parameters:
-      # Add parameter here   
     steps:
       - print_pipeline_id
       - run:
@@ -53,7 +44,8 @@ commands:
             
 jobs:
   build-frontend:
-    <<: *defaults
+    docker:
+      - image: circleci/node:13.8.0
     steps:
       - print_pipeline_id
       - checkout
@@ -68,7 +60,8 @@ jobs:
       - run: npm run lint
 
   build-backend:
-    <<: *defaults
+    docker:
+      - image: circleci/node:13.8.0
     steps:
       - print_pipeline_id
       - checkout
@@ -83,6 +76,8 @@ jobs:
       - run: npm run lint
 
   test-frontend:
+    docker:
+      - image: circleci/node:13.8.0
     steps:
       - print_pipeline_id
       - checkout
@@ -95,7 +90,8 @@ jobs:
             npm run test
                 
   test-backend:
-    <<: *defaults
+    docker:
+      - image: circleci/node:13.8.0
     steps:
       - print_pipeline_id
       - checkout
@@ -108,7 +104,8 @@ jobs:
             npm run test
             
   scan-frontend:
-    <<: *defaults
+    docker:
+      - image: circleci/node:13.8.0
     steps:
       - print_pipeline_id
       - checkout
@@ -121,7 +118,8 @@ jobs:
             npm audit
 
   scan-backend:
-    <<: *defaults
+    docker:
+      - image: circleci/node:13.8.0
     steps:
       - print_pipeline_id
       - checkout
@@ -207,7 +205,8 @@ jobs:
       # Here's where you will add some code to rollback on failure      
 
   run-migrations:
-    <<: *defaults
+    docker:
+      - image: circleci/node:13.8.0
     steps:
       - print_pipeline_id
       - checkout
@@ -284,6 +283,7 @@ jobs:
             tar -C backend -czvf backend-artifact.tar.gz .
       - run:
           name: Deploy backend
+          command: |
             cd .circleci/ansible
             echo "Contents  of the inventory.txt file is:"
             cat ~/inventory.txt
