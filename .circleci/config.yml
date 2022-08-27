@@ -60,7 +60,6 @@ jobs:
           command: |
             cd frontend
             npm install
-            npm run lint
       - save_cache:
           paths: [frontend/node_modules]
           key: frontend-build
@@ -75,7 +74,6 @@ jobs:
           command: |
             cd backend
             npm install
-            npm run lint
       - save_cache:
           paths: [backend/node_modules]
           key: backend-build
