@@ -60,10 +60,10 @@ jobs:
           command: |
             cd frontend
             npm install
+            npm run lint
       - save_cache:
           paths: [frontend/node_modules]
           key: frontend-build
-      - run: npm run lint
 
   build-backend:
     docker: *node-base-image
@@ -75,10 +75,10 @@ jobs:
           command: |
             cd backend
             npm install
+            npm run lint
       - save_cache:
           paths: [backend/node_modules]
           key: backend-build
-      - run: npm run lint
 
   test-frontend:
     docker: *node-base-image
