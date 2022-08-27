@@ -1,4 +1,7 @@
 version: 2.1
+aliases:
+  - &base-image
+    - image: circleci/node:13.8.0
 
 commands:
   print_pipeline_id:
@@ -44,8 +47,7 @@ commands:
             
 jobs:
   build-frontend:
-    docker:
-      - image: circleci/node:13.8.0
+    docker: *base-image
     steps:
       - print_pipeline_id
       - checkout
@@ -60,8 +62,7 @@ jobs:
       - run: npm run lint
 
   build-backend:
-    docker:
-      - image: circleci/node:13.8.0
+    docker: *base-image
     steps:
       - print_pipeline_id
       - checkout
@@ -76,8 +77,7 @@ jobs:
       - run: npm run lint
 
   test-frontend:
-    docker:
-      - image: circleci/node:13.8.0
+    docker: *base-image
     steps:
       - print_pipeline_id
       - checkout
@@ -90,8 +90,7 @@ jobs:
             npm run test
                 
   test-backend:
-    docker:
-      - image: circleci/node:13.8.0
+    docker: *base-image
     steps:
       - print_pipeline_id
       - checkout
@@ -104,8 +103,7 @@ jobs:
             npm run test
             
   scan-frontend:
-    docker:
-      - image: circleci/node:13.8.0
+    docker: *base-image
     steps:
       - print_pipeline_id
       - checkout
@@ -118,8 +116,7 @@ jobs:
             npm audit
 
   scan-backend:
-    docker:
-      - image: circleci/node:13.8.0
+    docker: *base-image
     steps:
       - print_pipeline_id
       - checkout
@@ -205,8 +202,7 @@ jobs:
       # Here's where you will add some code to rollback on failure      
 
   run-migrations:
-    docker:
-      - image: circleci/node:13.8.0
+    docker: *base-image
     steps:
       - print_pipeline_id
       - checkout
@@ -251,7 +247,8 @@ jobs:
             npm run build
             tar -czvf artifact-"${CIRCLE_WORKFLOW_ID:0:7}".tar.gz dist
             aws s3 cp dist s3://udapeople-${CIRCLE_WORKFLOW_ID:0:7} --recursive
-      - revert-migrations
+      - revert-migrations:
+          workflow_id: ${CIRCLE_WORKFLOW_ID:0:7}
       - destroy_environment 
                     
   deploy-backend:
@@ -289,7 +286,8 @@ jobs:
             cat ~/inventory.txt
             cd .circleci/ansible
             ansible-playbook -i ~/inventory.txt deploy-backend.yml
-      - revert-migrations
+      - revert-migrations:
+          workflow_id: ${CIRCLE_WORKFLOW_ID:0:7}
       - destroy_environment  
 
   smoke-test:
@@ -327,7 +325,8 @@ jobs:
             else
               return 1
             fi
-      - revert-migrations
+      - revert-migrations:
+          workflow_id: ${CIRCLE_WORKFLOW_ID:0:7}
       - destroy_environment
 
   # Update cloud front - route traffic to new instances
@@ -343,7 +342,8 @@ jobs:
             aws cloudformation deploy --template-file cloudfront.yml \
             --stack-name production-udapeople \
             --parameter-overrides WorkflowID="${CIRCLE_WORKFLOW_ID:0:7}"
-      - revert-migrations
+      - revert-migrations:
+          workflow_id: ${CIRCLE_WORKFLOW_ID:0:7}
       - destroy_environment  
 
 cleanup:
