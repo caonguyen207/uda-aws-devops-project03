@@ -85,12 +85,13 @@ jobs:
     steps:
       - print_pipeline_id
       - checkout
-      - restore_cache:
-          keys: [frontend-build]
+      # - restore_cache:
+      #     keys: [frontend-build]
       - run:
           name: Execute frontend unit test
           command: |
             cd frontend
+            npm install
             npm run test
                 
   test-backend:
