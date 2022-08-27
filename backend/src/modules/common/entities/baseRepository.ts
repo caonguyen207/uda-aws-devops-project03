@@ -2,7 +2,6 @@ import {
   DeepPartial,
   FindManyOptions,
   Repository,
-  DeleteResult,
 } from 'typeorm';
 import { IAggregateRoot } from './aggregateRoot';
 import { SyncEventDispatcher } from '../events';
