@@ -85,8 +85,6 @@ jobs:
     steps:
       - print_pipeline_id
       - checkout
-      # - restore_cache:
-      #     keys: [frontend-build]
       - run:
           name: Execute frontend unit test
           command: |
@@ -99,8 +97,6 @@ jobs:
     steps:
       - print_pipeline_id
       - checkout
-      # - restore_cache:
-      #     keys: [backend-build]
       - run:
           name: Execute backend unit test
           command: |
@@ -119,7 +115,8 @@ jobs:
           name: Execute audit command in frontend
           command: |
             cd frontend
-            npm audit
+            npm install
+            npm audit --audit-level=critical
 
   scan-backend:
     docker: *node-base-image
