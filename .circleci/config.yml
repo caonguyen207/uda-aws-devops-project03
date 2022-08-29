@@ -117,7 +117,6 @@ jobs:
           name: Execute audit command in frontend
           command: |
             cd frontend
-            npm install
             npm audit fix --audit-level=critical
 
   scan-backend:
@@ -131,7 +130,7 @@ jobs:
           name: Execute audit command in backend
           command: |
             cd backend
-            npm audit
+            npm audit fix --audit-level=critical
 
   deploy-infrastructure:
     docker: *aws-cli-image
@@ -204,8 +203,16 @@ jobs:
       - run:
           name: Configure server
           command: |
+            echo "IP address:"
             cat ~/project/.circleci/ansible/inventory.txt
-            ansible-playbook -i ~/project/.circleci/ansible/inventory.txt .circleci/ansible/configure-server.yml
+            cat project/.circleci/ansible/inventory.txt
+            ansible-playbook -i project/.circleci/ansible/inventory.txt .circleci/ansible/configure-server.yml
+      - run:
+          name: Test node version and npm version
+          command: |
+            npm -v
+            node -v
+            pm2 list
       - destroy_environment
 
   run-migrations:
@@ -328,7 +335,7 @@ jobs:
           command: |
             tar czf backend-artifact.tar.gz backend
       - store_artifacts:
-          path: ~/web/backend-artifact.tar.gz
+          path: backend-artifact.tar.gz
       - run:
           name: Deploy backend
           command: |
@@ -341,6 +348,7 @@ jobs:
 
   smoke-test:
     docker:
+      # TODO: change image to nodejs
       - image: alpine:latest
     steps:
       - print_pipeline_id
@@ -353,7 +361,7 @@ jobs:
       - run:
           name: Backend smoke test.
           command: |
-            export BACKEND_IP=$(cat project/.circleci/ansible/inventory.txt | sed 1d)
+            export BACKEND_IP=$(cat ~/project/.circleci/ansible/inventory.txt | sed 1d)
             export API_URL="http://${BACKEND_IP}:3030"
             echo "${API_URL}"
             if curl "${API_URL}/api/status" | grep "ok"
@@ -452,9 +460,9 @@ workflows:
           requires: [run-migrations]
       - deploy-backend:
           requires: [deploy-frontend]
-      # - smoke-test:
-      #     requires: [deploy-backend, deploy-frontend]
-      # - cloudfront-update:
-      #     requires: [smoke-test]
-      # - cleanup:
-      #     requires: [cloudfront-update]
+      - smoke-test:
+          requires: [deploy-backend, deploy-frontend]
+      - cloudfront-update:
+          requires: [smoke-test]
+      - cleanup:
+          requires: [cloudfront-update]
