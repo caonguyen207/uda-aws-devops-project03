@@ -266,7 +266,7 @@ jobs:
       - run:
           name: Get backend url
           command: |
-            export BACKEND_IP=$(cat ~/inventory.txt | sed 1d)
+            export BACKEND_IP=$(cat ~/project/.circleci/ansible/inventory.txt | sed 1d)
             export API_URL="http://${BACKEND_IP}:3030"
             echo "API_URL = ${API_URL}"
             echo API_URL="http://${BACKEND_IP}:3030" >> frontend/.env
@@ -319,14 +319,11 @@ jobs:
             - "93:8d:3f:88:14:c3:91:a8:69:05:b5:08:53:12:5e:a9"
       - attach_workspace:
           at: ~/
-      # - restore_cache:
-      #     keys: [backend-build]
       - run:
           name: Build backend
           command: |
-            sed 's/local/production/g' backend/.env
+            sed 's/local/production/g' ~/project/backend/.env
             cd backend
-            # TODO: revert
             npm install
             echo "Backend variables ---"
             cat ~/project/backend/.env
@@ -453,12 +450,12 @@ workflows:
               only: [main]
       - configure-infrastructure:
           requires: [deploy-infrastructure]
-      # - run-migrations:
-      #     requires: [configure-infrastructure]
-      - deploy-frontend
-          # requires: [run-migrations]
-      - deploy-backend
-          # requires: [run-migrations]
+      - run-migrations:
+          requires: [configure-infrastructure]
+      - deploy-frontend:
+          requires: [run-migrations]
+      - deploy-backend:
+          requires: [deploy-frontend]
       # - smoke-test:
       #     requires: [deploy-backend, deploy-frontend]
       # - cloudfront-update:
