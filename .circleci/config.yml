@@ -200,7 +200,7 @@ jobs:
       - run:
           name: Install aws-cli for destroy_environment step.
           command: |
-            yum install curl unzip -y
+            apk add --update unzip curl
             curl "https://awscli.amazonaws.com/awscli-exe-linux-x86_64.zip" -o "awscli-exe-linux-x86_64.zip.zip"
             unzip awscli-exe-linux-x86_64.zip
             sudo ./aws/install
