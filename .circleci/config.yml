@@ -253,16 +253,22 @@ jobs:
           workflow_id: ${CIRCLE_WORKFLOW_ID:0:7}
 
   deploy-frontend:
-    docker: *aws-cli-image
+    docker: *node-base-image
     steps:
       - print_pipeline_id
       - checkout
       - attach_workspace:
           at: ~/
       - run:
-          name: Install tar and gzip library
+          name: Install dependencies
           command: |
-            yum install -y tar gzip curl
+            sudo apt install -y tar gzip curl unzip
+      - run:
+          name: Install aws-cli
+          command: |
+            curl "https://awscli.amazonaws.com/awscli-exe-linux-x86_64.zip" -o "awscliv2.zip"
+            unzip awscliv2.zip
+            sudo ./aws/install
       - run:
           name: Get backend url
           command: |
@@ -271,8 +277,6 @@ jobs:
             echo "API_URL = ${API_URL}"
             echo API_URL="http://${BACKEND_IP}:3030" >> frontend/.env
             cat frontend/.env
-      - restore_cache:
-          keys: [frontend-build]
       - run:
           name: Prepare nodejs version
           command: |
@@ -286,7 +290,6 @@ jobs:
           # `npm run build` one last time so that the backend url gets "baked" into the front-end.
           command: |
             cd frontend
-            # TODO: revert
             npm install
             npm run build
             tar -czvf artifact-"${CIRCLE_WORKFLOW_ID:0:7}".tar.gz dist
