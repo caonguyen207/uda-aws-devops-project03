@@ -206,12 +206,6 @@ jobs:
             echo "IP address:"
             cat ~/project/.circleci/ansible/inventory.txt
             ansible-playbook -i ~/project/.circleci/ansible/inventory.txt .circleci/ansible/configure-server.yml
-      - run:
-          name: Test node version and npm version
-          command: |
-            npm -v
-            node -v
-            pm2 list
       - destroy_environment
 
   run-migrations:
