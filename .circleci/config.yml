@@ -5,7 +5,7 @@ aliases:
   - &aws-cli-image
     - image: amazon/aws-cli
   - &ansible-image
-    - image: python:3.7-alpine3.11
+    - image: python:3.11-rc-alpine
 
 commands:
   print_pipeline_id:
@@ -189,32 +189,31 @@ jobs:
       - print_pipeline_id
       - checkout
       # You can get this ID in the section where you registered the SSH Key
-      # TODO:
-      # - add_ssh_keys:
-      #     fingerprints:
-      #       - "93:8d:3f:88:14:c3:91:a8:69:05:b5:08:53:12:5e:a9"
+      - add_ssh_keys:
+          fingerprints:
+            - "93:8d:3f:88:14:c3:91:a8:69:05:b5:08:53:12:5e:a9"
       # Install ansible and dependencies
       # Install aws-cli for destroy steps
       - run:
           name: Install dependencies
           command: |
             apk add --update ansible
-      - run:
-          name: Install aws-cli for destroy_environment step.
-          command: |
-            apk add --update unzip curl
-            curl "https://awscli.amazonaws.com/awscli-exe-linux-x86_64.zip" -o "awscliv2.zip"
-            unzip awscliv2.zip
-            ./aws/install -i /usr/local/aws-cli -b /usr/local/bin
-            echo "AWS CLI version"
-            aws --version
+      # - run:
+      #     name: Install aws-cli for destroy_environment step.
+      #     command: |
+      #       apk add --update unzip curl
+      #       curl "https://awscli.amazonaws.com/awscli-exe-linux-x86_64.zip" -o "awscliv2.zip"
+      #       unzip awscliv2.zip
+      #       ./aws/install -i /usr/local/aws-cli -b /usr/local/bin
+      #       echo "AWS CLI version"
+      #       aws --version
       - attach_workspace:
           at: ~/
-      # - run:
-      #     name: Configure server
-      #     command: |
-      #       cat ~/project/.circleci/ansible/inventory.txt
-      #       ansible-playbook -i ~/project/.circleci/ansible/inventory.txt .circleci/ansible/configure-server.yml
+      - run:
+          name: Configure server
+          command: |
+            cat ~/project/.circleci/ansible/inventory.txt
+            ansible-playbook -i ~/project/.circleci/ansible/inventory.txt .circleci/ansible/configure-server.yml
       - destroy_environment
 
   run-migrations:
@@ -428,7 +427,7 @@ workflows:
           # requires: [test-frontend, test-backend, scan-frontend, scan-backend]
           filters:
             branches:
-              only: [main1]
+              only: [main]
       - configure-infrastructure
           # requires: [deploy-infrastructure]
       - run-migrations:
