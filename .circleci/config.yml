@@ -258,6 +258,8 @@ jobs:
               exit 1
             fi
       - destroy_environment
+      - revert_migrations:
+          workflow_id: ${CIRCLE_WORKFLOW_ID:0:7}
 
   deploy-frontend:
     docker: *aws-cli-image
