@@ -278,14 +278,6 @@ jobs:
             echo API_URL="http://${BACKEND_IP}:3030" >> frontend/.env
             cat frontend/.env
       - run:
-          name: Prepare nodejs version
-          command: |
-            curl https://nodejs.org/dist/v13.8.0/node-v13.8.0-linux-arm64.tar.gz -o node-v13.8.0-linux-arm64.tar.gz
-            tar zxvf node-v13.8.0-linux-arm64.tar.gz -C /opt
-            touch /etc/profile.d/nodejs.sh
-            echo -e "#!/bin/sh\n" >> /etc/profile.d/nodejs.sh
-            echo -e "export PATH=/opt/node-v13.8.0-linux-arm64/bin:$PATH"
-      - run:
           name: Deploy frontend objects
           # `npm run build` one last time so that the backend url gets "baked" into the front-end.
           command: |
