@@ -171,7 +171,7 @@ jobs:
             aws ec2 describe-instances \
             --query 'Reservations[*].Instances[*].PublicIpAddress' \
             --filters "Name=tag:Name,Values=backend-${CIRCLE_WORKFLOW_ID:0:7}" \
-            --output text >> .circleci/ansible/inventory.txt
+            --output text >> project/.circleci/ansible/inventory.txt
       - run:
           name: "Echo EC2 instances"
           command: |
@@ -201,8 +201,7 @@ jobs:
       - run:
           name: Configure server
           command: |
-            cd .circleci/ansible
-            cat project/.circleci/ansible/inventory.txt
+            cat ~/project/.circleci/ansible/inventory.txt
             ansible-playbook -i ~/project/.circleci/ansible/inventory.txt configure-server.yml
       - destroy_environment
 
