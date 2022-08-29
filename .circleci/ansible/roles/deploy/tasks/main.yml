@@ -1,15 +1,4 @@
 ---
-- name: Creates directory
-  file:
-    path: ~/web
-    state: directory
-    mode: 0755
-
-- name: Copy artifact files
-  template:
-    src: ~/project/backend-artifact.tar.gz
-    dest: ~/web/backend-artifact.tar.gz
-
 - name: Extract artifact files
   shell: |
     cd ~/web
