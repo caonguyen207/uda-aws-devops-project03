@@ -23,4 +23,4 @@
   shell: |
     cd /home/ubuntu/web
     pm2 stop default
-    pm2 start ~/web/backend/dist/main.js -f
+    pm2 start backend/dist/main.js -f
