@@ -244,7 +244,7 @@ jobs:
           command: |
             cd backend
             echo "Backend .env value"
-            cat project/backend/.env
+            cat ~/project/backend/.env
             npm install
             npm run migrations > migrations_dump.txt
       - run:
