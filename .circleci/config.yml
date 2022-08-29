@@ -190,7 +190,8 @@ jobs:
       - checkout
       # You can get this ID in the section where you registered the SSH Key
       - add_ssh_keys:
-          fingerprints: ["93:8d:3f:88:14:c3:91:a8:69:05:b5:08:53:12:5e:a9"]
+          fingerprints:
+            - "93:8d:3f:88:14:c3:91:a8:69:05:b5:08:53:12:5e:a9"
       # Install ansible and dependencies
       # Install aws-cli for destroy steps
       - run:
@@ -300,7 +301,8 @@ jobs:
             sudo ./aws/install
       # You can get this ID in the section where you registered the SSH Key
       - add_ssh_keys:
-          fingerprints: ["93:8d:3f:88:14:c3:91:a8:69:05:b5:08:53:12:5e:a9"]
+          fingerprints:
+            - "93:8d:3f:88:14:c3:91:a8:69:05:b5:08:53:12:5e:a9"
       - attach_workspace:
           at: ~/
       - restore_cache:
@@ -408,19 +410,19 @@ jobs:
 workflows:
   default:
     jobs:
-      - build-backend
-      - scan-backend:
-          requires: [build-backend]
-      - test-backend:
-          requires: [scan-backend]
-      - build-frontend:
-          requires: [test-backend]
-      - scan-frontend:
-          requires: [build-frontend]
-      - test-frontend:
-          requires: [scan-frontend]
+      # - build-backend
+      # - scan-backend:
+      #     requires: [build-backend]
+      # - test-backend:
+      #     requires: [scan-backend]
+      # - build-frontend:
+      #     requires: [test-backend]
+      # - scan-frontend:
+      #     requires: [build-frontend]
+      # - test-frontend:
+      #     requires: [scan-frontend]
       - deploy-infrastructure:
-          requires: [test-frontend, test-backend, scan-frontend, scan-backend]
+          # requires: [test-frontend, test-backend, scan-frontend, scan-backend]
           filters:
             branches:
               only: [main]
