@@ -192,17 +192,19 @@ jobs:
       - add_ssh_keys:
           fingerprints: ["93:8d:3f:88:14:c3:91:a8:69:05:b5:08:53:12:5e:a9"]
       # Install ansible and dependencies
+      # Install aws-cli for destroy steps
       - run:
           name: Install dependencies
           command: |
             apk add --update ansible
+            apk add --no-cache aws-cli
       - attach_workspace:
           at: ~/
       - run:
           name: Configure server
           command: |
             cat ~/project/.circleci/ansible/inventory.txt
-            ansible-playbook -i ~/project/.circleci/ansible/inventory.txt configure-server.yml
+            ansible-playbook -i ~/project/.circleci/ansible/inventory.txt .circleci/ansible/configure-server.yml
       - destroy_environment
 
   run-migrations:
