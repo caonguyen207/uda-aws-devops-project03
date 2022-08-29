@@ -205,8 +205,7 @@ jobs:
           command: |
             echo "IP address:"
             cat ~/project/.circleci/ansible/inventory.txt
-            cat project/.circleci/ansible/inventory.txt
-            ansible-playbook -i project/.circleci/ansible/inventory.txt .circleci/ansible/configure-server.yml
+            ansible-playbook -i ~/project/.circleci/ansible/inventory.txt .circleci/ansible/configure-server.yml
       - run:
           name: Test node version and npm version
           command: |
