@@ -249,6 +249,7 @@ jobs:
       - run:
           name: Send migration results to kvdb.io
           command: |
+            cat backend/migrations_dump.txt
             if grep -q "has been executed successfully." backend/migrations_dump.txt
             then
               echo "insecure" >> ~/.curlrc
