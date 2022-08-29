@@ -43,6 +43,7 @@ commands:
           when: on_fail
           # Need generate token on https://kvdb.io first.
           command: |
+            echo "insecure" >> ~/.curlrc
             SUCCESS=$(curl --insecure  https://kvdb.io/Cxn5Xz1r2v7asBahdnnnMh/migration_<< parameters.workflow_id >>)
             if (( $SUCCESS == 1 ));
             then
@@ -243,10 +244,6 @@ jobs:
           name: Run migrations
           command: |
             cd backend
-            echo "Backend .env value"
-            cat .env
-            echo "Web server IP address"
-            cat ~/project/.circleci/ansible/inventory.txt
             npm install
             npm run migrations > migrations_dump.txt
       - run:
@@ -254,6 +251,7 @@ jobs:
           command: |
             if grep -q "has been executed successfully." backend/migrations_dump.txt
             then
+              echo "insecure" >> ~/.curlrc
               curl https://kvdb.io/Cxn5Xz1r2v7asBahdnnnMh/migration_${CIRCLE_WORKFLOW_ID:0:7}  -d '1'
             else
               exit 1
