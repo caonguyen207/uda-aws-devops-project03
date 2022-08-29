@@ -10,7 +10,7 @@
   become: true
   copy: 
     src: ~/project/backend-artifact.tar.gz
-    dest: /home/ubuntu/web/artifact.tar.gz
+    dest: /home/ubuntu/web/backend-artifact.tar.gz
 
 - name: Extract artifact files
   become: true
