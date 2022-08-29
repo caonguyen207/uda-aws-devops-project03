@@ -306,9 +306,10 @@ jobs:
             apk update
             apk add --update ansible
             apk add --no-cache tar npm gzip curl gcompat
-            curl "https://awscli.amazonaws.com/awscli-exe-linux-x86_64.zip" -o "awscliv2.zip"
-            unzip awscliv2.zip
-            ./aws/install -i /usr/local/aws-cli -b /usr/local/bin
+            apk add --no-cache python3 py3-pip
+            pip3 install --upgrade pip
+            pip3 install awscli
+            rm -rf /var/cache/apk/*
             echo "Test aws cli version"
             aws --version
             which aws
