@@ -197,7 +197,13 @@ jobs:
           name: Install dependencies
           command: |
             apk add --update ansible
-            apk add --no-cache aws-cli
+      - run:
+          name: Install aws-cli for destroy_environment step.
+          command: |
+            yum install curl unzip -y
+            curl "https://awscli.amazonaws.com/awscli-exe-linux-x86_64.zip" -o "awscli-exe-linux-x86_64.zip.zip"
+            unzip awscli-exe-linux-x86_64.zip
+            sudo ./aws/install
       - attach_workspace:
           at: ~/
       - run:
