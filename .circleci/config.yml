@@ -304,41 +304,44 @@ jobs:
           name: Install dependencies
           command: |
             apk add --update ansible tar npm gzip curl
-            curl "https://awscli.amazonaws.com/awscli-exe-linux-x86_64.zip" -o "awscli-exe-linux-x86_64.zip.zip"
-            unzip awscli-exe-linux-x86_64.zip
+            curl "https://awscli.amazonaws.com/awscli-exe-linux-x86_64.zip" -o "awscliv2.zip"
+            unzip awscliv2.zip
             ./aws/install -i /usr/local/aws-cli -b /usr/local/bin
+            echo "Test aws cli version"
+            aws --version
+            which aws
       # You can get this ID in the section where you registered the SSH Key
-      - add_ssh_keys:
-          fingerprints:
-            - "93:8d:3f:88:14:c3:91:a8:69:05:b5:08:53:12:5e:a9"
-      - attach_workspace:
-          at: ~/
-      - restore_cache:
-          keys: [backend-build]
-      - run:
-          name: Build backend
-          command: |
-            sed 's/local/production/g' backend/.env
-            cd backend
-            # TODO: revert
-            npm install
-            echo "Backend variables ---"
-            cat ~/project/backend/.env
-            npm run build
-      - run:
-          name: Create backend artifact
-          command: |
-            cd ..
-            tar -C backend -czvf backend-artifact.tar.gz .
-      - run:
-          name: Deploy backend
-          command: |
-            echo "Contents  of the inventory.txt file is:"
-            cat ~/project/.circleci/ansible/inventory.txt
-            ansible-playbook -i ~/project/.circleci/ansible/inventory.txt .circleci/ansible/deploy-backend.yml
-      - revert_migrations:
-          workflow_id: ${CIRCLE_WORKFLOW_ID:0:7}
-      - destroy_environment  
+      # - add_ssh_keys:
+      #     fingerprints:
+      #       - "93:8d:3f:88:14:c3:91:a8:69:05:b5:08:53:12:5e:a9"
+      # - attach_workspace:
+      #     at: ~/
+      # - restore_cache:
+      #     keys: [backend-build]
+      # - run:
+      #     name: Build backend
+      #     command: |
+      #       sed 's/local/production/g' backend/.env
+      #       cd backend
+      #       # TODO: revert
+      #       npm install
+      #       echo "Backend variables ---"
+      #       cat ~/project/backend/.env
+      #       npm run build
+      # - run:
+      #     name: Create backend artifact
+      #     command: |
+      #       cd ..
+      #       tar -C backend -czvf backend-artifact.tar.gz .
+      # - run:
+      #     name: Deploy backend
+      #     command: |
+      #       echo "Contents  of the inventory.txt file is:"
+      #       cat ~/project/.circleci/ansible/inventory.txt
+      #       ansible-playbook -i ~/project/.circleci/ansible/inventory.txt .circleci/ansible/deploy-backend.yml
+      # - revert_migrations:
+      #     workflow_id: ${CIRCLE_WORKFLOW_ID:0:7}
+      # - destroy_environment  
 
   smoke-test:
     docker:
@@ -440,19 +443,19 @@ workflows:
       #     requires: [build-frontend]
       # - test-frontend:
       #     requires: [scan-frontend]
-      - deploy-infrastructure:
+      # - deploy-infrastructure:
       #     # requires: [test-frontend, test-backend, scan-frontend, scan-backend]
-          filters:
-            branches:
-              only: [main]
-      - configure-infrastructure:
-          requires: [deploy-infrastructure]
-      - run-migrations:
-          requires: [configure-infrastructure]
-      - deploy-frontend:
-          requires: [run-migrations]
-      - deploy-backend:
-          requires: [run-migrations]
+      #     filters:
+      #       branches:
+      #         only: [main]
+      # - configure-infrastructure:
+      #     requires: [deploy-infrastructure]
+      # - run-migrations:
+      #     requires: [configure-infrastructure]
+      # - deploy-frontend:
+      #     requires: [run-migrations]
+      - deploy-backend
+          # requires: [run-migrations]
       - smoke-test:
           requires: [deploy-backend, deploy-frontend]
       - cloudfront-update:
