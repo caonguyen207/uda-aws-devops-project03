@@ -203,7 +203,7 @@ jobs:
             apk add --update unzip curl
             curl "https://awscli.amazonaws.com/awscli-exe-linux-x86_64.zip" -o "awscli-exe-linux-x86_64.zip.zip"
             unzip awscli-exe-linux-x86_64.zip
-            sudo ./aws/install
+            ./aws/install
       - attach_workspace:
           at: ~/
       - run:
@@ -294,7 +294,10 @@ jobs:
       - run:
           name: Install tar and gzip library
           command: |
-            yum install -y tar gzip
+            apk add --update ansible tar npm gzip
+            curl "https://awscli.amazonaws.com/awscli-exe-linux-x86_64.zip" -o "awscli-exe-linux-x86_64.zip.zip"
+            unzip awscli-exe-linux-x86_64.zip
+            sudo ./aws/install
       # You can get this ID in the section where you registered the SSH Key
       - add_ssh_keys:
           fingerprints: ["93:8d:3f:88:14:c3:91:a8:69:05:b5:08:53:12:5e:a9"]
@@ -317,8 +320,8 @@ jobs:
           name: Deploy backend
           command: |
             echo "Contents  of the inventory.txt file is:"
-            cat project/.circleci/ansible/inventory.txt
-            ansible-playbook -i project/.circleci/ansible/inventory.txt .circleci/ansible/deploy-backend.yml
+            cat ~/project/.circleci/ansible/inventory.txt
+            ansible-playbook -i ~/project/.circleci/ansible/inventory.txt .circleci/ansible/deploy-backend.yml
       - revert_migrations:
           workflow_id: ${CIRCLE_WORKFLOW_ID:0:7}
       - destroy_environment  
