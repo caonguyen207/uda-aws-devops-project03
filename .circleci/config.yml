@@ -327,7 +327,7 @@ jobs:
           name: Create backend artifact
           command: |
             mkdir ~/web
-            tar -C backend -czvf ~/web/backend-artifact.tar.gz
+            tar czf ~/web/backend-artifact.tar.gz backend
       - store_artifacts:
           path: ~/web/backend-artifact.tar.gz
       - run:

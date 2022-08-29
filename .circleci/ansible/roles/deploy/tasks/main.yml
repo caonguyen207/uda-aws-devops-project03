@@ -7,4 +7,4 @@
 - name: Executing node
   shell: |
     pm2 stop default
-    pm2 start ~/web/dist/main.js -f
+    pm2 start ~/web/backend/dist/main.js -f
