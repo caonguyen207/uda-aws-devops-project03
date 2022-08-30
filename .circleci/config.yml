@@ -344,6 +344,7 @@ jobs:
     docker: *node-base-image
     steps:
       - print_pipeline_id
+      - checkout
       - run:
           name: Install dependencies
           # Curl for backend/frontend testing API
