@@ -49,7 +49,7 @@ commands:
             if (( $SUCCESS == 1 ));
             then
               cd backend
-              npm run migration:revert
+              npm run migrations:revert
             fi
             
 jobs:
@@ -354,6 +354,11 @@ jobs:
             curl "https://awscli.amazonaws.com/awscli-exe-linux-x86_64.zip" -o "awscliv2.zip"
             unzip awscliv2.zip
             sudo ./aws/install
+      - run:
+          name: Install node modules
+          command: |
+            cd backend
+            npm install
       - attach_workspace:
           at: ~/
       - run:
