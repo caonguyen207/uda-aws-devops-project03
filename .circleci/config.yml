@@ -341,14 +341,18 @@ jobs:
 
   smoke-test:
     docker:
-      # TODO: change image to nodejs
-      - image: alpine:latest
+      - image: *node-base-image
     steps:
       - print_pipeline_id
       - run:
           name: Install dependencies
+          # Curl for backend/frontend testing API
+          # aws-cli for clean up.
           command: |
-            apk add --update curl
+            sudo apt install -y tar gzip curl unzip
+            curl "https://awscli.amazonaws.com/awscli-exe-linux-x86_64.zip" -o "awscliv2.zip"
+            unzip awscliv2.zip
+            sudo ./aws/install
       - attach_workspace:
           at: ~/
       - run:
@@ -375,23 +379,23 @@ jobs:
             else
               return 1
             fi
-      - run:
-          name: Install dependencies
-          command: |
-            apk add --update ansible tar npm gzip curl
-            curl "https://awscli.amazonaws.com/awscli-exe-linux-x86_64.zip" -o "awscli-exe-linux-x86_64.zip.zip"
-            unzip awscli-exe-linux-x86_64.zip
-            ./aws/install -i /usr/local/aws-cli -b /usr/local/bin
       - revert_migrations:
           workflow_id: ${CIRCLE_WORKFLOW_ID:0:7}
       - destroy_environment
 
   # Update cloud front - route traffic to new instances
   cloudfront-update:
-    docker: *aws-cli-image
+    docker: *node-base-image
     steps:
       - print_pipeline_id
       - checkout
+      - run:
+          name: Install dependencies
+          command: | 
+            sudo apt install -y tar gzip curl unzip
+            curl "https://awscli.amazonaws.com/awscli-exe-linux-x86_64.zip" -o "awscliv2.zip"
+            unzip awscliv2.zip
+            sudo ./aws/install
       - run:
           name: Update cloudfront distribution
           command: |
@@ -430,14 +434,13 @@ workflows:
   default:
     jobs:
       # - build-backend
+      # - build-frontend
       # - scan-backend:
       #     requires: [build-backend]
-      # - test-backend:
-      #     requires: [scan-backend]
-      # - build-frontend:
-      #     requires: [test-backend]
       # - scan-frontend:
       #     requires: [build-frontend]
+      # - test-backend:
+      #     requires: [scan-backend]
       # - test-frontend:
       #     requires: [scan-frontend]
       - deploy-infrastructure:
