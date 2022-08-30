@@ -1,11 +1,12 @@
 version: 2.1
+
 aliases:
-  - &node-base-image
-    - image: circleci/node:13.8.0
   - &aws-cli-image
     - image: amazon/aws-cli
   - &ansible-image
     - image: python:3.11-rc-alpine
+  - &node-base-image
+    - image: circleci/node:13.8.0
 
 commands:
   print_pipeline_id:
@@ -340,8 +341,7 @@ jobs:
       - destroy_environment  
 
   smoke-test:
-    docker:
-      - image: *node-base-image
+    docker: *node-base-image
     steps:
       - print_pipeline_id
       - run:
@@ -455,7 +455,7 @@ workflows:
       - deploy-frontend:
           requires: [run-migrations]
       - deploy-backend:
-          requires: [deploy-frontend]
+          requires: [run-migrations]
       - smoke-test:
           requires: [deploy-backend, deploy-frontend]
       - cloudfront-update:
