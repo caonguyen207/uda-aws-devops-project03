@@ -451,6 +451,7 @@ workflows:
           requires: [scan-backend]
       - test-frontend:
           requires: [scan-frontend]
+      # Test deploy step
       - deploy-infrastructure:
           requires: [test-frontend, test-backend, scan-frontend, scan-backend]
           filters:
