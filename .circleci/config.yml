@@ -428,7 +428,7 @@ jobs:
       - run:
           name: Remove old stacks and files
           command: |
-            if [[ "${STACKS[@]}" =~ "${OldWorkflowID}" ]]
+            if [[ "${CIRCLE_WORKFLOW_ID:0:7}" != "${OldWorkflowID}" ]]
             then
               echo "Found stacks with ${OldWorkflowID}"
               aws s3 rm "s3://udapeople-${OldWorkflowID}" --recursive
@@ -441,18 +441,18 @@ jobs:
 workflows:
   default:
     jobs:
-      # - build-backend
-      # - build-frontend
-      # - scan-backend:
-      #     requires: [build-backend]
-      # - scan-frontend:
-      #     requires: [build-frontend]
-      # - test-backend:
-      #     requires: [scan-backend]
-      # - test-frontend:
-      #     requires: [scan-frontend]
+      - build-backend
+      - build-frontend
+      - scan-backend:
+          requires: [build-backend]
+      - scan-frontend:
+          requires: [build-frontend]
+      - test-backend:
+          requires: [scan-backend]
+      - test-frontend:
+          requires: [scan-frontend]
       - deploy-infrastructure:
-          # requires: [test-frontend, test-backend, scan-frontend, scan-backend]
+          requires: [test-frontend, test-backend, scan-frontend, scan-backend]
           filters:
             branches:
               only: [main]
