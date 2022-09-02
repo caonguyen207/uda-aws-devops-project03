@@ -20,7 +20,6 @@ commands:
   destroy_environment:
     description: Destroy back-end and front-end cloudformation stacks given a workflow ID.
     steps:
-      - print_pipeline_id
       - run:
           name: Destroy environments
           when: on_fail
@@ -328,8 +327,6 @@ jobs:
           name: Create backend artifact
           command: |
             tar czf backend-artifact.tar.gz backend
-      - store_artifacts:
-          path: backend-artifact.tar.gz
       - run:
           name: Deploy backend
           command: |
