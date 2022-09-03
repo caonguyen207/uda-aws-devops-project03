@@ -177,6 +177,10 @@ jobs:
           command: |
             echo "IP address:"
             cat ~/project/.circleci/ansible/inventory.txt
+      - run:
+          name: Test failed step
+          command: |
+            exit 1
       - persist_to_workspace:
           root: ~/
           paths:
