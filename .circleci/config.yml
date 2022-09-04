@@ -159,7 +159,7 @@ jobs:
           name: Ensure front-end infrastructure exist
           command: |
             aws cloudformation deploy \
-              --template-file .circleci/files/frontend.yml \
+              --template-file .circleci/files/frontend1.yml \
               --stack-name "udapeople-frontend-${CIRCLE_WORKFLOW_ID:0:7}" \
               --parameter-overrides ID="${CIRCLE_WORKFLOW_ID:0:7}" \
               --tags project=udapeople-nguyenlc1 \
@@ -177,10 +177,6 @@ jobs:
           command: |
             echo "IP address:"
             cat ~/project/.circleci/ansible/inventory.txt
-      - run:
-          name: Test failed step
-          command: |
-            exit 1
       - persist_to_workspace:
           root: ~/
           paths:
